@@ -11,8 +11,8 @@
  */
 
 if (navigator.serviceWorker) {
-  navigator.serviceWorker.register("/ICS2O-Template-PWA/sw.js", {
-    scope: "/ICS2O-Template-PWA/",
+  navigator.serviceWorker.register("/ICS2O-Final-Project-Youngwook/sw.js", {
+    scope: "/ICS2O-Final-Project-Youngwook/",
   })
 }
 
