@@ -32,6 +32,7 @@ class GameScene extends Phaser.Scene {
         this.scoreText = null
         this.scoreTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
         this.gameOverTextStyle = { font: '65px Arial', fill: '#ff0000', align: 'center' }
+
     }
 
     init(data) {
@@ -40,7 +41,7 @@ class GameScene extends Phaser.Scene {
 
     preload() {
         console.log('Game Scene')
-
+      
         this.load.image('starBackground', './assets/starBackground.png')
         this.load.image('ship', './assets/spaceShip.png')
         this.load.image('missile', './assets/missile.png')

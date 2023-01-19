@@ -20,7 +20,7 @@ const gameScene = new GameScene()
 const config = {
   type: Phaser.AUTO,
   width: 1920,
-  height: 1080,
+  height: 880,
   physics: {
     default: "arcade",
     arcade: {
@@ -32,7 +32,7 @@ const config = {
   scale: {
     mode: Phaser.Scale.FIT,
     //we place it in the middle of the page
-    autoCenter: Phaser.Scale.CENTER_BOTH,
+    autoCenter: Phaser.Scale.CENTER_HORIZONTALLY
   },
 }
 
@@ -43,6 +43,5 @@ const game = new Phaser.Game(config)
 // NOTE: remember any "key" is global and can't be reused!
 game.scene.add("menuScene", menuScene)
 game.scene.add("gameScene", gameScene)
-
 // start title
 game.scene.start("menuScene")
