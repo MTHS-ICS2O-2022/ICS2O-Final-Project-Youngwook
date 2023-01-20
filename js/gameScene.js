@@ -14,6 +14,14 @@ class GameScene extends Phaser.Scene {
      * This method is the constructor
     **/
     createAlien() {
+        var wordDataList = this.cache.json.get('wordDataFile')
+        var random = Math.floor(Math.random() * wordDataList.length)
+        console.log("length : " + wordDataList.length)
+        console.log("random : " + random)
+        var targetWord = wordDataList[random]
+        console.log("word : " + targetWord)
+        console.log("word length : " + targetWord.length)
+      
         const alienYLocation = Math.floor(Math.random() * 680) + 100
         let alienXVelocity = Math.floor(Math.random() * 300) + this.score + 50
         const anAlien = this.physics.add.sprite(0, alienYLocation, 'alien')
@@ -30,6 +38,7 @@ class GameScene extends Phaser.Scene {
         this.fireMissile = false
         this.score = 0
         this.scoreText = null
+        this.wordTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
         this.scoreTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
         this.gameOverTextStyle = { font: '65px Arial', fill: '#ff0000', align: 'center' }
     }
@@ -41,6 +50,7 @@ class GameScene extends Phaser.Scene {
     preload() {
         console.log('Game Scene')
 
+        this.load.json('wordDataFile', 'https://random-word-api.herokuapp.com/all')
         this.load.image('starBackground', './assets/starBackground.png')
         this.load.image('ship', './assets/spaceShip.png')
         this.load.image('missile', './assets/missile.png')
