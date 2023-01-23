@@ -14,6 +14,7 @@ class GameScene extends Phaser.Scene {
      * This method is the constructor
     **/
     createAlien() {
+        // get target word
         var wordDataList = this.cache.json.get('wordDataFile')
         var random = Math.floor(Math.random() * wordDataList.length)
         console.log("length : " + wordDataList.length)
@@ -21,12 +22,17 @@ class GameScene extends Phaser.Scene {
         var targetWord = wordDataList[random]
         console.log("word : " + targetWord)
         console.log("word length : " + targetWord.length)
-      
+
+        // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
-        let alienXVelocity = Math.floor(Math.random() * 300) + this.score + 50
+        let alienXVelocity = Math.floor(Math.random() * 300) + 160 - (targetWord.length * 10)
         const anAlien = this.physics.add.sprite(0, alienYLocation, 'alien')
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
+
+        // get target text
+        this.targetText = this.add.text(0, alienYLocation, targetWord , this.targetTextStyle)
+        
         this.alienGroup.add(anAlien)
     }
 
@@ -38,6 +44,9 @@ class GameScene extends Phaser.Scene {
         this.fireMissile = false
         this.score = 0
         this.scoreText = null
+        this.level = 1
+      
+        this.targetTextStyle = { font: '32px Arial', fill: '#00ff00', align: 'center' }
         this.wordTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
         this.scoreTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
         this.gameOverTextStyle = { font: '65px Arial', fill: '#ff0000', align: 'center' }
@@ -62,17 +71,25 @@ class GameScene extends Phaser.Scene {
     }
 
     create(data) {
+        // background
         this.background = this.add.image(0, 0, 'starBackground').setScale(2.0)
         this.background.setOrigin(0, 0)
 
+        // score
         this.scoreText = this.add.text(10, 10, 'Score: ' + this.score.toString(), this.scoreTextStyle)
-        this.ship = this.physics.add.sprite(1920 / 2, 1080 - 100, "ship")
 
+        // ship
+        this.ship = this.physics.add.sprite(1920 / 2, 1080 - 100, "ship")
+        this.targetText = this.add.text(500, 500, 'target', this.targetTextStyle)
+
+        // missile
         this.missileGroup = this.physics.add.group()
 
+        // alien
         this.alienGroup = this.add.group()
         this.createAlien()
-
+      
+        // destroy function
         this.physics.add.collider(this.missileGroup, this.alienGroup, function(missileCollide, alienCollide) {
             alienCollide.destroy()
             missileCollide.destroy()
@@ -80,9 +97,9 @@ class GameScene extends Phaser.Scene {
             this.score = this.score + 1
             this.scoreText.setText('Score: ' + this.score.toString())
             this.createAlien()
-            this.createAlien()
         }.bind(this))
 
+        // game over function
         this.physics.add.collider(this.ship, this.alienGroup, function(shipCollide, alienCollide) {
             this.sound.play('bomb')
             this.physics.pause()
@@ -95,6 +112,7 @@ class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
+        // control the ship
         const keyLeftObj = this.input.keyboard.addKey('LEFT')
         const keyRightObj = this.input.keyboard.addKey('RIGHT')
         const keySpaceObj = this.input.keyboard.addKey('SPACE')
@@ -125,12 +143,22 @@ class GameScene extends Phaser.Scene {
             this.fireMissile = false
         }
 
+        // missile interaction
         this.missileGroup.children.each(function(item) {
             item.y = item.y - 15
             if (item.y < 0) {
                 item.destroy
             }
         })
+
+        // level count
+        if (this.score >= this.level * 10) {
+          this.createAlien()
+          this.level = this.level + 1
+        }
+
+        // this.target.x = Math.floor(this.ship.x + this.ship.width / 2)
+        // this.target.y = Math.floor(this.ship.y + this.ship.height / 2)
     }
 }
 
