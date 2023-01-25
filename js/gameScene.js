@@ -17,11 +17,11 @@ class GameScene extends Phaser.Scene {
         // get target word
         var wordDataList = this.cache.json.get('wordDataFile')
         var random = Math.floor(Math.random() * wordDataList.length)
-        console.log("length : " + wordDataList.length)
-        console.log("random : " + random)
+        // console.log("length : " + wordDataList.length)
+        // console.log("random : " + random)
         var targetWord = wordDataList[random]
-        console.log("word : " + targetWord)
-        console.log("word length : " + targetWord.length)
+        // console.log("word : " + targetWord)
+        // console.log("word length : " + targetWord.length)
 
         // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
@@ -30,9 +30,11 @@ class GameScene extends Phaser.Scene {
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
 
-        // get target text
-        this.targetText = this.add.text(0, alienYLocation, targetWord , this.targetTextStyle)
-        
+        const targetText = this.add.text(0, alienYLocation, targetWord, this.targetTextStyle).setOrigin(0.5)
+      
+        this.physics.world.enableBody(targetText)
+        targetText.body.setVelocity(alienXVelocity , 0)
+      
         this.alienGroup.add(anAlien)
     }
 
@@ -46,7 +48,7 @@ class GameScene extends Phaser.Scene {
         this.scoreText = null
         this.level = 1
       
-        this.targetTextStyle = { font: '32px Arial', fill: '#00ff00', align: 'center' }
+        this.targetTextStyle = { font: '32px Arial', fill: '#ff0000', align: 'center' }
         this.wordTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
         this.scoreTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
         this.gameOverTextStyle = { font: '65px Arial', fill: '#ff0000', align: 'center' }
@@ -80,19 +82,20 @@ class GameScene extends Phaser.Scene {
 
         // ship
         this.ship = this.physics.add.sprite(1920 / 2, 1080 - 100, "ship")
-        this.targetText = this.add.text(500, 500, 'target', this.targetTextStyle)
 
         // missile
         this.missileGroup = this.physics.add.group()
 
         // alien
         this.alienGroup = this.add.group()
+        this.targetGroup = this.add.group()
         this.createAlien()
       
         // destroy function
         this.physics.add.collider(this.missileGroup, this.alienGroup, function(missileCollide, alienCollide) {
             alienCollide.destroy()
             missileCollide.destroy()
+            
             this.sound.play('explosion')
             this.score = this.score + 1
             this.scoreText.setText('Score: ' + this.score.toString())
@@ -156,9 +159,7 @@ class GameScene extends Phaser.Scene {
           this.createAlien()
           this.level = this.level + 1
         }
-
-        // this.target.x = Math.floor(this.ship.x + this.ship.width / 2)
-        // this.target.y = Math.floor(this.ship.y + this.ship.height / 2)
+        
     }
 }
 
