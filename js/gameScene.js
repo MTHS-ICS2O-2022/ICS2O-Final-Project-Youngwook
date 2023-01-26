@@ -38,6 +38,11 @@ class GameScene extends Phaser.Scene {
         this.alienGroup.add(anAlien)
     }
 
+    textInput() {
+      var userInput = inputText.text;
+      console.log("user input : " + userInput)
+    }
+
     constructor() {
         super({ key: 'gameScene' })
 
@@ -47,7 +52,29 @@ class GameScene extends Phaser.Scene {
         this.score = 0
         this.scoreText = null
         this.level = 1
-      
+
+        this.inputStyle = {
+          
+          // Element properties
+          type: 'text',    // 'text'|'password'|'textarea'|'number'|'color'|...
+          id: "inputText",
+          placeholder: "enter the word",
+          readOnly: false,
+          spellCheck: false,
+          autoComplete: 'off',
+
+          // Style properties
+          align: "center",
+          fontFamily: "Arial, Helvetica, sans-serif",
+          fontSize: "32pt",
+          color: '#ffffff',
+          border: 1,
+          backgroundColor: '#000000',
+          borderColor: '#ffffff',
+          selectAll: true,
+          direction: 'ltr'
+        }
+
         this.targetTextStyle = { font: '32px Arial', fill: '#ff0000', align: 'center' }
         this.wordTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
         this.scoreTextStyle = { font: '65px Arial', fill: '#ffffff', align: 'center' }
@@ -60,7 +87,12 @@ class GameScene extends Phaser.Scene {
 
     preload() {
         console.log('Game Scene')
-
+      
+        // plugin
+        this.load.plugin('rexwaiteventsplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexwaiteventsplugin.min.js', true)
+        this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true)
+      
+        // assets
         this.load.json('wordDataFile', 'https://random-word-api.herokuapp.com/all')
         this.load.image('starBackground', './assets/starBackground.png')
         this.load.image('ship', './assets/spaceShip.png')
@@ -73,6 +105,8 @@ class GameScene extends Phaser.Scene {
     }
 
     create(data) {
+        this.add.rexInputText(960, 980, 2000, 100, this.inputStyle)
+      
         // background
         this.background = this.add.image(0, 0, 'starBackground').setScale(2.0)
         this.background.setOrigin(0, 0)
@@ -159,7 +193,12 @@ class GameScene extends Phaser.Scene {
           this.createAlien()
           this.level = this.level + 1
         }
-        
+
+        // text input
+        const keyEnterObj = this.input.keyboard.addKey('ENTER')
+        if (keyEnterObj.isDown === true) {
+          this.textInput()
+        }
     }
 }
 
