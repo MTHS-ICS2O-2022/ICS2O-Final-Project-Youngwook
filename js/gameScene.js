@@ -9,19 +9,14 @@
 /**
  * This class is the Title Scene
 **/
+let inputText = ""
+
 class GameScene extends Phaser.Scene {
-    /**
-     * This method is the constructor
-    **/
     createAlien() {
         // get target word
         var wordDataList = this.cache.json.get('wordDataFile')
         var random = Math.floor(Math.random() * wordDataList.length)
-        // console.log("length : " + wordDataList.length)
-        // console.log("random : " + random)
         var targetWord = wordDataList[random]
-        // console.log("word : " + targetWord)
-        // console.log("word length : " + targetWord.length)
 
         // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
@@ -36,11 +31,13 @@ class GameScene extends Phaser.Scene {
         targetText.body.setVelocity(alienXVelocity , 0)
       
         this.alienGroup.add(anAlien)
+        this.targetGroup.add(targetText)
     }
+  
+    submit() {
+      console.log("input : " + inputText)
+      this.inputText.setText('input: ' + inputText)
 
-    textInput() {
-      var userInput = inputText.text;
-      console.log("user input : " + userInput)
     }
 
     constructor() {
@@ -49,20 +46,23 @@ class GameScene extends Phaser.Scene {
         this.background = null
         this.ship = null
         this.fireMissile = false
+        this.submitInput = false
         this.score = 0
         this.scoreText = null
+        this.inputText = null
         this.level = 1
 
         this.inputStyle = {
           
           // Element properties
           type: 'text',    // 'text'|'password'|'textarea'|'number'|'color'|...
-          id: "inputText",
+          id: "inputTextStyle",
+          text: "",
           placeholder: "enter the word",
           readOnly: false,
           spellCheck: false,
           autoComplete: 'off',
-
+          
           // Style properties
           align: "center",
           fontFamily: "Arial, Helvetica, sans-serif",
@@ -81,15 +81,16 @@ class GameScene extends Phaser.Scene {
         this.gameOverTextStyle = { font: '65px Arial', fill: '#ff0000', align: 'center' }
     }
 
+
+  
     init(data) {
         this.cameras.main.setBackgroundColor('#0x5f6e7a')
     }
-
+  
     preload() {
         console.log('Game Scene')
       
         // plugin
-        this.load.plugin('rexwaiteventsplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexwaiteventsplugin.min.js', true)
         this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true)
       
         // assets
@@ -104,8 +105,13 @@ class GameScene extends Phaser.Scene {
         this.load.audio('bomb', './assets/bomb.wav')
     }
 
+
+  
     create(data) {
-        this.add.rexInputText(960, 980, 2000, 100, this.inputStyle)
+        var textField = this.add.rexInputText(960, 980, 2000, 100, this.inputStyle).on('textchange', function() {
+          inputText = textField.text
+          console.log(inputText)
+        })
       
         // background
         this.background = this.add.image(0, 0, 'starBackground').setScale(2.0)
@@ -113,6 +119,7 @@ class GameScene extends Phaser.Scene {
 
         // score
         this.scoreText = this.add.text(10, 10, 'Score: ' + this.score.toString(), this.scoreTextStyle)
+        this.inputText = this.add.text(350, 10, 'Input: ' + inputText, this.scoreTextStyle)
 
         // ship
         this.ship = this.physics.add.sprite(1920 / 2, 1080 - 100, "ship")
@@ -148,6 +155,8 @@ class GameScene extends Phaser.Scene {
         }.bind(this))
     }
 
+
+  
     update(time, delta) {
         // control the ship
         const keyLeftObj = this.input.keyboard.addKey('LEFT')
@@ -196,9 +205,18 @@ class GameScene extends Phaser.Scene {
 
         // text input
         const keyEnterObj = this.input.keyboard.addKey('ENTER')
+      
         if (keyEnterObj.isDown === true) {
-          this.textInput()
+          if (this.submitInput === false) {
+            this.submitInput = true
+            this.submit()
+          }
         }
+
+        if (keyEnterObj.isUp === true) {
+          this.submitInput = false
+        }
+
     }
 }
 
