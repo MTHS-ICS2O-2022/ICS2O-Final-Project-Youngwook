@@ -20,7 +20,7 @@ const gameScene = new GameScene()
 const config = {
   type: Phaser.AUTO,
   width: 1920,
-  height: 880,
+  height: 1080,
   physics: {
     default: "arcade",
     arcade: {
@@ -34,6 +34,12 @@ const config = {
     //we place it in the middle of the page
     autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
   },
+
+  // text field plugin
+  parent: "phaser-game",
+  dom: {
+    createContainer: true
+  }, 
 }
 
 const game = new Phaser.Game(config)
