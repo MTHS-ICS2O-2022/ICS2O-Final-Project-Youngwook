@@ -34,6 +34,7 @@ class GameScene extends Phaser.Scene {
         const targetText = this.add.text(0, alienYLocation, targetWord, this.targetTextStyle).setOrigin(0.5)
         this.physics.world.enableBody(targetText)
         targetText.body.setVelocity(alienXVelocity , 0)
+        targetText.target = targetWord
 
         this.alienGroup.add(anAlien)
         this.targetGroup.add(targetText)
@@ -129,7 +130,6 @@ class GameScene extends Phaser.Scene {
         GameSceneInfo = this
         this.textField = this.add.rexInputText(960, 980, 2000, 100, this.inputStyle).on('textchange', function(i, e, scene = GameSceneInfo) {
           inputText = scene.textField.text
-          console.log(inputText)
         })
       
         // background
@@ -238,7 +238,7 @@ class GameScene extends Phaser.Scene {
             this.inputText.setText('input: ' + inputText)
 
             if (inputText != null) {
-              var returnIndex = this.targetGroup.children.entries.findIndex(function (data) {return data._text === inputText})
+              var returnIndex = this.targetGroup.children.entries.findIndex(function (data) {return data.target === inputText})
               // console.log("returnIndex = " + returnIndex)
               
               if (returnIndex != -1){   
@@ -268,7 +268,7 @@ class GameScene extends Phaser.Scene {
                   this.alienGroup.children.entries.splice(spriteIndex, 1)
                 }
               }
-              console.log(this)
+              // console.log(this)
             }
           }
           this.textField.setText("")
