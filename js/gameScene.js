@@ -9,7 +9,7 @@
 /**
  * This class is the Title Scene
 **/
-let inputText = null
+let inputText = ""
 let GameSceneInfo = null
 
 class GameScene extends Phaser.Scene {
@@ -21,7 +21,7 @@ class GameScene extends Phaser.Scene {
 
         // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
-        let alienXVelocity = Math.floor(Math.random() * 200) + 300 - (targetWord.length * 25) + (this.score * 5)
+        let alienXVelocity = Math.floor(Math.random() * 200) + 200 - (targetWord.length * 25) + (this.level * 10)
         if (alienXVelocity < 50) {
           alienXVelocity = 50
         }
@@ -120,8 +120,8 @@ class GameScene extends Phaser.Scene {
         this.load.image('alien', './assets/alien.png')
 
         this.load.audio('laser', './assets/laser1.wav')
-        this.load.audio('explosion', './assets/barrelExploding.wav')
-        this.load.audio('bomb', './assets/bomb.wav')
+        this.load.audio('bomb', './assets/barrelExploding.wav')
+        this.load.audio('bomb1', './assets/bomb.wav')
 
         
     }
@@ -151,6 +151,8 @@ class GameScene extends Phaser.Scene {
         // alien
         this.alienGroup = this.add.group()
         this.targetGroup = this.add.group()
+        this.createAlien()
+        this.createAlien()
         this.createAlien()
       
         // // destroy function
@@ -234,7 +236,6 @@ class GameScene extends Phaser.Scene {
           if (this.submitInput === false) {
             this.submitInput = true
             
-            console.log("input : " + inputText)
             this.inputText.setText('input: ' + inputText)
 
             if (inputText != null) {
@@ -244,34 +245,20 @@ class GameScene extends Phaser.Scene {
               if (returnIndex != -1){   
                 this.targetGroup.children.entries[returnIndex].destroy()
                 
-               // if (returnIndex != 0){
-                  this.targetGroup.children.entries.splice(returnIndex, 1)
-                //}
-              }
-
-              var spriteIndex = this.alienGroup.children.entries.findIndex(function (data) {return data.target === inputText})
-              // console.log("spriteIndex = " + spriteIndex)
-              // console.log(this)
-              
-              if (spriteIndex != -1){   
-                this.ult = this.ult + this.alienGroup.children.entries[spriteIndex].target.length
+                this.ult = this.ult + this.alienGroup.children.entries[returnIndex].target.length
                 this.ultText.setText(this.ult.toString() + " %")
                 
-                this.alienGroup.children.entries[spriteIndex].destroy()
+                this.alienGroup.children.entries[returnIndex].destroy()
                 // create alien
                 this.createAlien()
                 this.sound.play('laser')
                 this.score = this.score + 1
                 this.scoreText.setText('Score: ' + this.score.toString())
-                
-                if (spriteIndex != 0){
-                  this.alienGroup.children.entries.splice(spriteIndex, 1)
-                }
               }
-              // console.log(this)
             }
           }
           this.textField.setText("")
+    //      console.log(this)
         }
 
         if (keyEnterObj.isUp === true) {

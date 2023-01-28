@@ -28,7 +28,7 @@ class OverScene extends Phaser.Scene {
     this.bestScore = null
 
     this.gameOverTextStyle = { font: '200px Arial', fill: '#00ff00', align: 'center' }
-    this.againTextStyle = { font: '100px Arial', fill: '#00ff00', align: 'center' }
+    this.againTextStyle = { font: '100px Arial', fill: '#00ff00', align: 'center'}
     this.infoTextStyle = { font: '48px Arial', fill: '#00ff00', align: 'center' }
   }
   
