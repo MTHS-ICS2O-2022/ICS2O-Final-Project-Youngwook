@@ -21,7 +21,10 @@ class GameScene extends Phaser.Scene {
 
         // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
-        let alienXVelocity = 100 // Math.floor(Math.random() * 300) + 160 - (targetWord.length * 10)
+        let alienXVelocity = Math.floor(Math.random() * 200) + 300 - (targetWord.length * 25) + (this.score * 5)
+        if (alienXVelocity < 50) {
+          alienXVelocity = 50
+        }
         const anAlien = this.physics.add.sprite(0, alienYLocation, 'alien')
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
@@ -56,13 +59,14 @@ class GameScene extends Phaser.Scene {
         this.submitInput = false
         this.debugInput = false
         this.ultInput = false
+        this.ultActive = false
         this.score = 0
         this.ult = 0
         this.life = 3
+        this.level = 1
         this.scoreText = null
         this.inputText = null
         this.ultimateText = null
-        this.level = 1
         this.localScore = null
 
         this.inputStyle = {
@@ -89,8 +93,8 @@ class GameScene extends Phaser.Scene {
         }
 
         this.targetTextStyle = { font: '48px Arial', fill: '#ff0000', align: 'center' }
-        this.inputTextStyle = { font: '64px Arial', fill: '#00ff00', align: 'center' }
-        this.scoreTextStyle = { font: '50px Arial', fill: '#ffffff', align: 'center' }
+        this.inputTextStyle = { font: '64px Arial', fill: '#ffffff', align: 'center' }
+        this.scoreTextStyle = { font: '50px Arial', fill: '#00ffff', align: 'center' }
         this.gameOverTextStyle = { font: '64px Arial', fill: '#ff0000', align: 'center' }
     }
 
@@ -149,33 +153,34 @@ class GameScene extends Phaser.Scene {
         this.targetGroup = this.add.group()
         this.createAlien()
       
-        // destroy function
-        this.physics.add.collider(this.missileGroup, this.alienGroup, function(missileCollide, alienCollide) {
-            alienCollide.destroy()
-            missileCollide.destroy()
+        // // destroy function
+        // this.physics.add.collider(this.missileGroup, this.alienGroup, function(missileCollide, alienCollide) {
+        //     alienCollide.destroy()
+        //     missileCollide.destroy()
             
-            this.sound.play('explosion')
-            this.score = this.score + 1
-            this.scoreText.setText('Score: ' + this.score.toString())
-            this.createAlien()
-        }.bind(this))
+        //     this.sound.play('explosion')
+        //     this.score = this.score + 1
+        //     this.scoreText.setText('Score: ' + this.score.toString())
+        //     this.createAlien()
+        // }.bind(this))
 
-        // game over function
-        this.physics.add.collider(this.ship, this.alienGroup, function(shipCollide, alienCollide) {
-            this.sound.play('bomb')
-            this.physics.pause()
-            alienCollide.destroy()
-            shipCollide.destroy()
-            this.gameOverText = this.add.text(1920 / 2, 1080 / 2, "Game Over!\nClick to play again", this.gameOverTextStyle).setOrigin(0.5)
-            this.gameOverText.setInteractive({ useHandCursor: true })
-            this.gameOverText.on("pointerdown", () => this.scene.start("gameScene"))
-        }.bind(this))
+        // // game over function
+        // this.physics.add.collider(this.ship, this.alienGroup, function(shipCollide, alienCollide) {
+        //     this.sound.play('bomb')
+        //     this.physics.pause()
+        //     alienCollide.destroy()
+        //     shipCollide.destroy()
+        //     this.gameOverText = this.add.text(1920 / 2, 1080 / 2, "Game Over!\nClick to play again", this.gameOverTextStyle).setOrigin(0.5)
+        //     this.gameOverText.setInteractive({ useHandCursor: true })
+        //     this.gameOverText.on("pointerdown", () => this.scene.start("gameScene"))
+        // }.bind(this))
     }
 
 
   
     update(time, delta) {
       GameSceneInfo = this
+      if (this.ultActive == true) {
         // control the ship
         const keyLeftObj = this.input.keyboard.addKey('LEFT')
         const keyRightObj = this.input.keyboard.addKey('RIGHT')
@@ -214,11 +219,12 @@ class GameScene extends Phaser.Scene {
                 item.destroy()
             }
         })
-
+      }
+      
         // level count
         if (this.score >= this.level * 10) {
-          this.createAlien()
           this.level = this.level + 1
+          this.createAlien()
         }
 
         // text input
@@ -248,13 +254,13 @@ class GameScene extends Phaser.Scene {
               // console.log(this)
               
               if (spriteIndex != -1){   
-                this.ult = this.ult + this.alienGroup.children.entries[spriteIndex].target.length + 100
+                this.ult = this.ult + this.alienGroup.children.entries[spriteIndex].target.length
                 this.ultText.setText(this.ult.toString() + " %")
                 
                 this.alienGroup.children.entries[spriteIndex].destroy()
                 // create alien
                 this.createAlien()
-                this.sound.play('explosion')
+                this.sound.play('laser')
                 this.score = this.score + 1
                 this.scoreText.setText('Score: ' + this.score.toString())
                 
@@ -265,6 +271,7 @@ class GameScene extends Phaser.Scene {
               console.log(this)
             }
           }
+          this.textField.setText("")
         }
 
         if (keyEnterObj.isUp === true) {
@@ -273,7 +280,6 @@ class GameScene extends Phaser.Scene {
 
         // debug
         const keySlashObj = this.input.keyboard.addKey('FORWARD_SLASH')
-      
         if (keySlashObj.isDown === true) {
           if (this.debugInput === false) {
             this.debugInput = true
@@ -330,6 +336,22 @@ class GameScene extends Phaser.Scene {
               console.log("ult")
               this.ult = this.ult - 100
               this.ultText.setText(this.ult.toString() + " %")
+              const alienNumber = this.alienGroup.children.entries.length
+              console.log(this.alienGroup.children.entries.length)
+
+              this.alienGroup.children.each(function(item) {
+                item.destroy()
+              })
+
+              this.targetGroup.children.each(function(item) {
+                item.destroy()
+              })
+
+              for (let count = 0; count < alienNumber; count++) {
+                this.createAlien()
+                this.sound.play('laser')
+              }
+            
             } else {
               console.log("ult failed")
             }
@@ -337,9 +359,10 @@ class GameScene extends Phaser.Scene {
         }
 
         if (keyTabObj.isUp === true) {
-          this.ultInput = false
+            this.ultInput = false
         }
     }
 }
 
 export default GameScene
+
