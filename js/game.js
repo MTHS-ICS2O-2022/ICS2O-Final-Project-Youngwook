@@ -43,7 +43,6 @@ const config = {
 }
 
 const game = new Phaser.Game(config)
-// comsole.log(game)
 
 // load scenes
 // NOTE: remember any "key" is global and can't be reused!
