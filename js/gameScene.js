@@ -10,7 +10,7 @@
  * This class is the Title Scene
 **/
 let inputText = null
-
+let GameSceneInfo = null
 class GameScene extends Phaser.Scene {
     createAlien() {
         // get target word
@@ -20,7 +20,7 @@ class GameScene extends Phaser.Scene {
 
         // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
-        let alienXVelocity = 300 // Math.floor(Math.random() * 300) + 160 - (targetWord.length * 10)
+        let alienXVelocity = 1000 // Math.floor(Math.random() * 300) + 160 - (targetWord.length * 10)
         const anAlien = this.physics.add.sprite(0, alienYLocation, 'alien')
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
@@ -34,16 +34,16 @@ class GameScene extends Phaser.Scene {
         this.alienGroup.add(anAlien)
         this.targetGroup.add(targetText)
 
-        anAlien.setInteractive()
-        anAlien.on('pointerdown', function (pointer) {
-          console.log("click")
-          if (inputText == anAlien.target) {
-            anAlien.destroy()
-            targetText.destroy()
+        // anAlien.setInteractive()
+        // anAlien.on('pointerdown', function (pointer) {
+        //   console.log("click")
+        //   if (inputText == anAlien.target) {
+        //     anAlien.destroy()
+        //     targetText.destroy()
 
-            console.log(this)
-          }
-        })
+        //     console.log(this)
+        //   }
+        // })
     }
 
     constructor() {
@@ -99,13 +99,14 @@ class GameScene extends Phaser.Scene {
   
     preload() {
         console.log('Game Scene')
-        console.log(Phaser)
+        console.log(this)
       
         // plugin
         this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true)
       
         // assets
         this.load.json('wordDataFile', 'https://random-word-api.herokuapp.com/all')
+        this.load.json('gameResultFile', './game-result.json')
         this.load.image('starBackground', './assets/starBackground.png')
         this.load.image('ship', './assets/spaceShip.png')
         this.load.image('missile', './assets/missile.png')
@@ -114,13 +115,14 @@ class GameScene extends Phaser.Scene {
         this.load.audio('laser', './assets/laser1.wav')
         this.load.audio('explosion', './assets/barrelExploding.wav')
         this.load.audio('bomb', './assets/bomb.wav')
+
+        
     }
-
-
   
     create(data) {
-        var textField = this.add.rexInputText(960, 980, 2000, 100, this.inputStyle).on('textchange', function() {
-          inputText = textField.text
+        GameSceneInfo = this
+        this.textField = this.add.rexInputText(960, 980, 2000, 100, this.inputStyle).on('textchange', function(i, e, scene = GameSceneInfo) {
+          inputText = scene.textField.text
           console.log(inputText)
         })
       
@@ -171,6 +173,7 @@ class GameScene extends Phaser.Scene {
 
   
     update(time, delta) {
+      GameSceneInfo = this
         // control the ship
         const keyLeftObj = this.input.keyboard.addKey('LEFT')
         const keyRightObj = this.input.keyboard.addKey('RIGHT')
@@ -233,9 +236,9 @@ class GameScene extends Phaser.Scene {
               if (returnIndex != -1){   
                 this.targetGroup.children.entries[returnIndex].destroy()
                 
-                if (returnIndex != 0){
+               // if (returnIndex != 0){
                   this.targetGroup.children.entries.splice(returnIndex, 1)
-                }
+                //}
               }
 
               var spriteIndex = this.alienGroup.children.entries.findIndex(function (data) {return data.target === inputText})
@@ -280,13 +283,14 @@ class GameScene extends Phaser.Scene {
         }
 
         // game over
-        this.alienGroup.children.each(function(item) {
+        this.alienGroup.children.each(function(item, e, scene = GameSceneInfo) {
           if (item.x >= 1920) {
-            console.log(item)
+            scene.sound.play('bomb')
+            scene.life = scene.life - 1
+            scene.lifeText.setText('Life: ' + scene.life.toString())
+            scene.createAlien()
+            
             item.destroy()
-            this.life = this.life - 1
-            this.lifeText.setText('Life: ' + this.life.toString())
-            this.sound.play('bomb')
           }
         })
 
@@ -295,6 +299,21 @@ class GameScene extends Phaser.Scene {
               item.destroy()
           }
         })
+
+        if (this.life == 0) {
+          this.physics.pause()
+          this.textField.destroy()
+
+          var resultData = this.cache.json.get('gameResultFile')
+          resultData.score = this.score
+          console.log("score : " + resultData.score)
+
+          
+          this.scene.start("overScene")
+          // this.gameOverText = this.add.text(1920 / 2, 1080 / 2, "Game Over!\nClick to play again", this.gameOverTextStyle).setOrigin(0.5)
+          // this.gameOverText.setInteractive({ useHandCursor: true })
+          // this.gameOverText.on("pointerdown", () => this.scene.start("gameScene"))
+        }
     }
 }
 
