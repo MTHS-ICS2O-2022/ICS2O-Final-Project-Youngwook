@@ -11,6 +11,7 @@
 **/
 let inputText = null
 let GameSceneInfo = null
+
 class GameScene extends Phaser.Scene {
     createAlien() {
         // get target word
@@ -20,7 +21,7 @@ class GameScene extends Phaser.Scene {
 
         // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
-        let alienXVelocity = 1000 // Math.floor(Math.random() * 300) + 160 - (targetWord.length * 10)
+        let alienXVelocity = 100 // Math.floor(Math.random() * 300) + 160 - (targetWord.length * 10)
         const anAlien = this.physics.add.sprite(0, alienYLocation, 'alien')
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
@@ -54,6 +55,7 @@ class GameScene extends Phaser.Scene {
         this.fireMissile = false
         this.submitInput = false
         this.debugInput = false
+        this.ultInput = false
         this.score = 0
         this.ult = 0
         this.life = 3
@@ -61,6 +63,7 @@ class GameScene extends Phaser.Scene {
         this.inputText = null
         this.ultimateText = null
         this.level = 1
+        this.localScore = null
 
         this.inputStyle = {
           
@@ -106,7 +109,6 @@ class GameScene extends Phaser.Scene {
       
         // assets
         this.load.json('wordDataFile', 'https://random-word-api.herokuapp.com/all')
-        this.load.json('gameResultFile', './game-result.json')
         this.load.image('starBackground', './assets/starBackground.png')
         this.load.image('ship', './assets/spaceShip.png')
         this.load.image('missile', './assets/missile.png')
@@ -231,7 +233,7 @@ class GameScene extends Phaser.Scene {
 
             if (inputText != null) {
               var returnIndex = this.targetGroup.children.entries.findIndex(function (data) {return data._text === inputText})
-              console.log("returnIndex = " + returnIndex)
+              // console.log("returnIndex = " + returnIndex)
               
               if (returnIndex != -1){   
                 this.targetGroup.children.entries[returnIndex].destroy()
@@ -242,10 +244,13 @@ class GameScene extends Phaser.Scene {
               }
 
               var spriteIndex = this.alienGroup.children.entries.findIndex(function (data) {return data.target === inputText})
-              console.log("spriteIndex = " + spriteIndex)
-              console.log(this)
+              // console.log("spriteIndex = " + spriteIndex)
+              // console.log(this)
               
               if (spriteIndex != -1){   
+                this.ult = this.ult + this.alienGroup.children.entries[spriteIndex].target.length + 100
+                this.ultText.setText(this.ult.toString() + " %")
+                
                 this.alienGroup.children.entries[spriteIndex].destroy()
                 // create alien
                 this.createAlien()
@@ -300,19 +305,39 @@ class GameScene extends Phaser.Scene {
           }
         })
 
-        if (this.life == 0) {
+        if (this.life <= 0) {
           this.physics.pause()
           this.textField.destroy()
 
-          var resultData = this.cache.json.get('gameResultFile')
-          resultData.score = this.score
-          console.log("score : " + resultData.score)
+          localStorage.setItem('score', this.score)
+          this.localScore = localStorage.getItem('score')
+          console.log(this.localScore)
 
+          this.score = 0
+          this.ult = 0
+          this.life = 3
           
           this.scene.start("overScene")
-          // this.gameOverText = this.add.text(1920 / 2, 1080 / 2, "Game Over!\nClick to play again", this.gameOverTextStyle).setOrigin(0.5)
-          // this.gameOverText.setInteractive({ useHandCursor: true })
-          // this.gameOverText.on("pointerdown", () => this.scene.start("gameScene"))
+        }
+
+        // ult
+        const keyTabObj = this.input.keyboard.addKey('TAB')
+        if (keyTabObj.isDown === true) {
+          if (this.ultInput === false) {
+            this.ultInput = true
+
+            if (this.ult >= 100) {
+              console.log("ult")
+              this.ult = this.ult - 100
+              this.ultText.setText(this.ult.toString() + " %")
+            } else {
+              console.log("ult failed")
+            }
+          }
+        }
+
+        if (keyTabObj.isUp === true) {
+          this.ultInput = false
         }
     }
 }

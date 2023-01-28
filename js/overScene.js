@@ -21,10 +21,15 @@ class OverScene extends Phaser.Scene {
 
     this.gameOverText = null
     this.againText = null
+    this.scoreText = null
+    this.bestText = null
+
+    this.localScore = null
+    this.bestScore = null
 
     this.gameOverTextStyle = { font: '200px Arial', fill: '#00ff00', align: 'center' }
     this.againTextStyle = { font: '100px Arial', fill: '#00ff00', align: 'center' }
-    this.infoTextStyle = { font: '64px Arial', fill: '#00ff00', align: 'center' }
+    this.infoTextStyle = { font: '48px Arial', fill: '#00ff00', align: 'center' }
   }
   
   init(data) {
@@ -48,7 +53,18 @@ class OverScene extends Phaser.Scene {
     this.gameOverText = this.add.text(1920 / 2, 480 / 2, 'Game Over!', this.gameOverTextStyle).setOrigin(0.5)
     this.againText = this.add.text(1920 / 2, 800 / 2, 'Click to play again', this.againTextStyle).setOrigin(0.5)
 
-    
+    this.localScore = Number(localStorage.getItem('score'))
+    this.scoreText = this.add.text(100, 800, 'The score is : ' + this.localScore, this.infoTextStyle)
+
+    this.bestScore = Number(localStorage.getItem('best'))
+    if (this.localScore > this.bestScore || this.bestScore == null) {
+      this.bestScore = this.localScore
+      localStorage.setItem('best', this.bestScore)
+
+      this.bestText = this.add.text(100, 900, 'Achived best score ! : ' + this.bestScore, this.infoTextStyle)
+    } else {
+      this.bestText = this.add.text(100, 900, 'Best score is : ' + this.bestScore, this.infoTextStyle)
+    }
   }
 
   update(time, delta) {
