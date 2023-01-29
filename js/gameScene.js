@@ -121,9 +121,9 @@ class GameScene extends Phaser.Scene {
 
         this.load.audio('laser', './assets/laser1.wav')
         this.load.audio('bomb', './assets/barrelExploding.wav')
-        this.load.audio('bomb1', './assets/bomb.wav')
-
-        
+        this.load.audio('over', './assets/laserbig.wav')
+        this.load.audio('ult', './assets/laserblast.wav')
+        this.load.audio('spark', './assets/spark.wav')
     }
   
     create(data) {
@@ -254,6 +254,8 @@ class GameScene extends Phaser.Scene {
                 this.sound.play('laser')
                 this.score = this.score + 1
                 this.scoreText.setText('Score: ' + this.score.toString())
+              } else {
+                this.sound.play('spark')
               }
             }
           }
@@ -299,6 +301,7 @@ class GameScene extends Phaser.Scene {
         })
 
         if (this.life <= 0) {
+          this.sound.play('over')
           this.physics.pause()
           this.textField.destroy()
 
@@ -336,7 +339,7 @@ class GameScene extends Phaser.Scene {
 
               for (let count = 0; count < alienNumber; count++) {
                 this.createAlien()
-                this.sound.play('laser')
+                this.sound.play('ult')
               }
             
             } else {
