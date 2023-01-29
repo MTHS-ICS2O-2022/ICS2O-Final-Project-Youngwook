@@ -157,7 +157,7 @@ class GameScene extends Phaser.Scene {
         space4.visible = false
         const space5 = this.add.image(0,0, 'space5').setOrigin(0 , 0).setScale(2.0)
         space5.visible = false
-        const space6 = this.add.image(0,0, 'spcae6').setOrigin(0 , 0).setScale(2.0)
+        const space6 = this.add.image(0,0, 'space6').setOrigin(0 , 0).setScale(2.0)
         space6.visible = false
       
         this.spaceList = [space0, space1, space2, space3, space4, space5, space6]
@@ -284,7 +284,7 @@ class GameScene extends Phaser.Scene {
                 // create alien
                 this.createAlien()
                 this.sound.play('laser')
-                this.score = this.score + 10
+                this.score = this.score + 1
                 this.scoreText.setText('Score: ' + this.score.toString())
               } else {
                 this.sound.play('spark')
