@@ -259,6 +259,7 @@ class GameScene extends Phaser.Scene {
             console.log(spaceListRandom)
             this.spaceList[spaceListRandom].visible = true
           }
+          this.createAlien()
         }
 
         // text input
