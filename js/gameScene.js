@@ -51,6 +51,7 @@ class GameScene extends Phaser.Scene {
         this.ultInput = false
         this.ultOneInput = false
         this.ultOneActive = false
+        this.ultTwoInput = false
         this.score = 0
         this.ult = 0
         this.life = 3
@@ -379,17 +380,22 @@ class GameScene extends Phaser.Scene {
 
             if (this.ult >= 30) {
               console.log("ult-one")
+              this.sound.play('ult')
               this.ult = this.ult - 30
               this.ultText.setText(this.ult.toString() + " %")
+              // ult1 active
               this.ultOneActive = true
+              this.textField.visible = false
+              this.textField.readOnly = true
               console.log("actived")
+
+              // ult2 disable
               var timer = this.time.delayedCall(5000, function(scene = GameSceneInfo) {
                 scene.ultOneActive = false
+                scene.textField.visible = true
+                scene.textField.readOnly = false
                 console.log("disactived")
               })
-              
-              
-            
             } else {
               console.log("ult-one failed")
             }
