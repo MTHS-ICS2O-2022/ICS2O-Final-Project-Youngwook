@@ -40,6 +40,60 @@ class GameScene extends Phaser.Scene {
         this.targetGroup.add(targetText)
     }
 
+    createAlien1() {
+        // get target word
+        var wordDataList = this.cache.json.get('wordDataFile')
+        var random = Math.floor(Math.random() * wordDataList.length)
+        var targetWord = wordDataList[random]
+
+        // get random alien location
+        const alienYLocation = Math.floor(Math.random() * 680) + 100
+        let alienXVelocity = Math.floor(Math.random() * 200) + 200 - (targetWord.length * 25) + (this.level * 10)
+        if (alienXVelocity < 50) {
+          alienXVelocity = 50
+        }
+        const anAlien = this.physics.add.sprite(0, alienYLocation, 'alien')
+        anAlien.body.velocity.x = alienXVelocity 
+        anAlien.body.velocity.y = 0
+        anAlien.target = targetWord
+        console.log(targetWord)
+        
+        const targetText = this.add.text(0, alienYLocation, targetWord, this.targetTextStyle1).setOrigin(0.5)
+        this.physics.world.enableBody(targetText)
+        targetText.body.setVelocity(alienXVelocity , 0)
+        targetText.target = targetWord
+
+        this.alienGroup1.add(anAlien)
+        this.targetGroup1.add(targetText)
+    }
+
+    createAlien2() {
+        // get target word
+        var wordDataList = this.cache.json.get('wordDataFile')
+        var random = Math.floor(Math.random() * wordDataList.length)
+        var targetWord = wordDataList[random]
+
+        // get random alien location
+        const alienYLocation = Math.floor(Math.random() * 680) + 100
+        let alienXVelocity = Math.floor(Math.random() * 200) + 200 - (targetWord.length * 25) + (this.level * 10)
+        if (alienXVelocity < 50) {
+          alienXVelocity = 50
+        }
+        const anAlien = this.physics.add.sprite(0, alienYLocation, 'alien')
+        anAlien.body.velocity.x = alienXVelocity 
+        anAlien.body.velocity.y = 0
+        anAlien.target = targetWord
+        console.log(targetWord)
+        
+        const targetText = this.add.text(0, alienYLocation, targetWord, this.targetTextStyle2).setOrigin(0.5)
+        this.physics.world.enableBody(targetText)
+        targetText.body.setVelocity(alienXVelocity , 0)
+        targetText.target = targetWord
+
+        this.alienGroup2.add(anAlien)
+        this.targetGroup2.add(targetText)
+    }
+
     constructor() {
         super({ key: 'gameScene' })
 
@@ -84,6 +138,8 @@ class GameScene extends Phaser.Scene {
         }
 
         this.targetTextStyle = { font: '48px Arial', fill: '#ff0000', align: 'center' }
+        this.targetTextStyle1 = { font: '48px Arial', fill: '#ff00ff', align: 'center' }
+        this.targetTextStyle2 = { font: '48px Arial', fill: '#0000ff', align: 'center' }
         this.inputTextStyle = { font: '64px Arial', fill: '#ffffff', align: 'center' }
         this.scoreTextStyle = { font: '50px Arial', fill: '#00ffff', align: 'center' }
         this.gameOverTextStyle = { font: '64px Arial', fill: '#ff0000', align: 'center' }
@@ -164,6 +220,13 @@ class GameScene extends Phaser.Scene {
         this.createAlien()
         this.createAlien()
 
+        // special alien
+        this.alienGroup1 = this.add.group()
+        this.targetGroup1 = this.add.group()
+
+        this.alienGroup2 = this.add.group()
+        this.targetGroup2 = this.add.group()
+
         // colider
         this.physics.add.collider(this.missileGroup, this.alienGroup, function(missileCollide, alienCollide, scene = GameSceneInfo) {
             console.log(missileCollide.target)
@@ -232,10 +295,17 @@ class GameScene extends Phaser.Scene {
           if (returnIndex != -1){
             this.spaceList[returnIndex].visible = false
             var spaceListRandom = Math.floor(Math.random() * this.spaceList.length)
-            console.log(spaceListRandom)
             this.spaceList[spaceListRandom].visible = true
           }
           this.createAlien()
+
+          var createRandom = Math.floor(Math.random() * 4)
+          console.log(createRandom)
+          if (createRandom == 0 ) {
+            this.createAlien1()
+          } else if (createRandom == 1) {
+            this.createAlien2()
+          }
         }
 
         // text input
@@ -249,20 +319,49 @@ class GameScene extends Phaser.Scene {
 
             if (inputText != null) {
               var returnIndex = this.targetGroup.children.entries.findIndex(function (data) {return data.target === inputText})
-              // console.log("returnIndex = " + returnIndex)
+              var returnIndex1 = this.targetGroup1.children.entries.findIndex(function (data) {return data.target === inputText})
+              var returnIndex2 = this.targetGroup2.children.entries.findIndex(function (data) {return data.target === inputText})
               
               if (returnIndex != -1){   
                 this.targetGroup.children.entries[returnIndex].destroy()
                 
-                this.ult = Math.round(this.ult + this.alienGroup.children.entries[returnIndex].target.length + (this.alienGroup.children.entries[returnIndex].target.length * this.level / 10))
+                this.ult = this.ult + this.alienGroup.children.entries[returnIndex].target.length
                 this.ultText.setText(this.ult.toString() + " %")
                 
                 this.alienGroup.children.entries[returnIndex].destroy()
-                // create alien
+                // destroy effect
                 this.createAlien()
                 this.sound.play('laser')
                 this.score = this.score + 1
                 this.scoreText.setText('Score: ' + this.score.toString())
+                
+              } else if (returnIndex1 != -1) {
+                this.targetGroup1.children.entries[returnIndex1].destroy()
+
+                this.ult = this.ult + this.alienGroup1.children.entries[returnIndex1].target.length
+                this.ultText.setText(this.ult.toString() + " %")
+                
+                this.alienGroup1.children.entries[returnIndex1].destroy()
+                // destroy effect
+                this.sound.play('laser')
+                this.score = this.score + 3
+                this.scoreText.setText('Score: ' + this.score.toString())
+                this.life = this.life + 1
+                this.lifeText.setText('Life: ' + this.life.toString())
+                
+              } else if (returnIndex2 != -1) {
+                this.targetGroup2.children.entries[returnIndex2].destroy()
+
+                this.ult = this.ult + this.alienGroup2.children.entries[returnIndex2].target.length
+                this.ultText.setText(this.ult.toString() + " %")
+                
+                this.alienGroup2.children.entries[returnIndex2].destroy()
+                // destroy effect
+                this.sound.play('laser')
+                this.score = this.score + 3
+                this.scoreText.setText('Score: ' + this.score.toString())
+                this.ult = this.ult + 50
+                this.ultText.setText(this.ult.toString() + ' %')
               } else {
                 this.sound.play('spark')
               }
@@ -280,9 +379,7 @@ class GameScene extends Phaser.Scene {
         if (keySlashObj.isDown === true) {
           if (this.debugInput === false) {
             this.debugInput = true
-            
-            console.log(this)
-            this.inputText.setText('Input:')
+            this.scoreText.setText('Score: ' + this.score.toString())
           }
         }
 
