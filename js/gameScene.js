@@ -114,10 +114,18 @@ class GameScene extends Phaser.Scene {
       
         // assets
         this.load.json('wordDataFile', 'https://random-word-api.herokuapp.com/all')
-        this.load.image('starBackground', './assets/starBackground.png')
+        
         this.load.image('ship', './assets/spaceShip.png')
         this.load.image('missile', './assets/missile.png')
         this.load.image('alien', './assets/alien.png')
+
+        this.load.image('space0', './assets/space/space.png')
+        this.load.image('space1', './assets/space/front.png')
+        this.load.image('space2', './assets/space/back.png')
+        this.load.image('space3', './assets/space/top.png')
+        this.load.image('space4', './assets/space/bottom.png')
+        this.load.image('space5', './assets/space/right.png')
+        this.load.image('space6', './assets/space/left.png')
 
         this.load.audio('laser', './assets/laser1.wav')
         this.load.audio('bomb', './assets/barrelExploding.wav')
@@ -128,19 +136,37 @@ class GameScene extends Phaser.Scene {
   
     create(data) {
         GameSceneInfo = this
+        // text field
         this.textField = this.add.rexInputText(960, 980, 2000, 100, this.inputStyle).on('textchange', function(i, e, scene = GameSceneInfo) {
           inputText = scene.textField.text
         })
       
         // background
-        this.background = this.add.image(0, 0, 'starBackground').setScale(2.0)
-        this.background.setOrigin(0, 0)
+        // this.background = this.add.image(0, 0, 'space0').setScale(2.0)
+        // this.background.setOrigin(0, 0)
+
+        const space0 = this.add.image(0,0, 'space0').setOrigin(0 , 0).setScale(2.0)
+        space0.visible = true
+        const space1 = this.add.image(0,0, 'space1').setOrigin(0 , 0).setScale(2.0)
+        space1.visible = false
+        const space2 = this.add.image(0,0, 'space2').setOrigin(0 , 0).setScale(2.0)
+        space2.visible = false
+        const space3 = this.add.image(0,0, 'space3').setOrigin(0 , 0).setScale(2.0)
+        space3.visible = false
+        const space4 = this.add.image(0,0, 'space4').setOrigin(0 , 0).setScale(2.0)
+        space4.visible = false
+        const space5 = this.add.image(0,0, 'space5').setOrigin(0 , 0).setScale(2.0)
+        space5.visible = false
+        const space6 = this.add.image(0,0, 'spcae6').setOrigin(0 , 0).setScale(2.0)
+        space6.visible = false
+      
+        this.spaceList = [space0, space1, space2, space3, space4, space5, space6]
 
         // score
         this.inputText = this.add.text(10, 850, 'Input: ' + inputText, this.inputTextStyle)
         this.scoreText = this.add.text(10, 10, 'Score: ' + this.score.toString(), this.scoreTextStyle)
         this.ultText = this.add.text(300, 10, this.ult.toString() + " %", this.scoreTextStyle)
-        this.lifeText = this.add.text(600, 10, 'life: ' + this.life.toString(), this.scoreTextStyle)
+        this.lifeText = this.add.text(600, 10, 'Life: ' + this.life.toString(), this.scoreTextStyle)
 
         // ship
         this.ship = this.physics.add.sprite(1920 / 2, 1080 - 100, "ship")
@@ -226,7 +252,13 @@ class GameScene extends Phaser.Scene {
         // level count
         if (this.score >= this.level * 10) {
           this.level = this.level + 1
-          this.createAlien()
+          var returnIndex = this.spaceList.findIndex(function (data) {return data.visible === true})
+          if (returnIndex != -1){
+            this.spaceList[returnIndex].visible = false
+            var spaceListRandom = Math.floor(Math.random() * this.spaceList.length)
+            console.log(spaceListRandom)
+            this.spaceList[spaceListRandom].visible = true
+          }
         }
 
         // text input
@@ -252,7 +284,7 @@ class GameScene extends Phaser.Scene {
                 // create alien
                 this.createAlien()
                 this.sound.play('laser')
-                this.score = this.score + 1
+                this.score = this.score + 10
                 this.scoreText.setText('Score: ' + this.score.toString())
               } else {
                 this.sound.play('spark')
@@ -260,7 +292,6 @@ class GameScene extends Phaser.Scene {
             }
           }
           this.textField.setText("")
-    //      console.log(this)
         }
 
         if (keyEnterObj.isUp === true) {
@@ -272,9 +303,9 @@ class GameScene extends Phaser.Scene {
         if (keySlashObj.isDown === true) {
           if (this.debugInput === false) {
             this.debugInput = true
-            console.log(this.missileGroup.children)
-            console.log(this.alienGroup.children)
+            
             console.log(this)
+            this.inputText.setText('Input:')
           }
         }
 
@@ -311,7 +342,17 @@ class GameScene extends Phaser.Scene {
 
           this.score = 0
           this.ult = 0
+          this.level = 0
           this.life = 3
+          inputText = ""
+
+          this.spaceList[0].visible = true
+          this.spaceList[1].visible = false
+          this.spaceList[2].visible = false
+          this.spaceList[3].visible = false
+          this.spaceList[4].visible = false
+          this.spaceList[5].visible = false
+          this.spaceList[6].visible = false
           
           this.scene.start("overScene")
         }
