@@ -38,17 +38,6 @@ class GameScene extends Phaser.Scene {
 
         this.alienGroup.add(anAlien)
         this.targetGroup.add(targetText)
-
-        // anAlien.setInteractive()
-        // anAlien.on('pointerdown', function (pointer) {
-        //   console.log("click")
-        //   if (inputText == anAlien.target) {
-        //     anAlien.destroy()
-        //     targetText.destroy()
-
-        //     console.log(this)
-        //   }
-        // })
     }
 
     constructor() {
@@ -60,7 +49,8 @@ class GameScene extends Phaser.Scene {
         this.submitInput = false
         this.debugInput = false
         this.ultInput = false
-        this.ultActive = false
+        this.ultOneInput = false
+        this.ultOneActive = false
         this.score = 0
         this.ult = 0
         this.life = 3
@@ -71,7 +61,6 @@ class GameScene extends Phaser.Scene {
         this.localScore = null
 
         this.inputStyle = {
-          
           // Element properties
           type: 'text',    // 'text'|'password'|'textarea'|'number'|'color'|...
           id: "inputTextStyle",
@@ -99,8 +88,6 @@ class GameScene extends Phaser.Scene {
         this.gameOverTextStyle = { font: '64px Arial', fill: '#ff0000', align: 'center' }
     }
 
-
-  
     init(data) {
         this.cameras.main.setBackgroundColor('#0x5f6e7a')
     }
@@ -140,10 +127,6 @@ class GameScene extends Phaser.Scene {
         this.textField = this.add.rexInputText(960, 980, 2000, 100, this.inputStyle).on('textchange', function(i, e, scene = GameSceneInfo) {
           inputText = scene.textField.text
         })
-      
-        // background
-        // this.background = this.add.image(0, 0, 'space0').setScale(2.0)
-        // this.background.setOrigin(0, 0)
 
         const space0 = this.add.image(0,0, 'space0').setOrigin(0 , 0).setScale(2.0)
         space0.visible = true
@@ -159,7 +142,6 @@ class GameScene extends Phaser.Scene {
         space5.visible = false
         const space6 = this.add.image(0,0, 'space6').setOrigin(0 , 0).setScale(2.0)
         space6.visible = false
-      
         this.spaceList = [space0, space1, space2, space3, space4, space5, space6]
 
         // score
@@ -180,35 +162,29 @@ class GameScene extends Phaser.Scene {
         this.createAlien()
         this.createAlien()
         this.createAlien()
-      
-        // // destroy function
-        // this.physics.add.collider(this.missileGroup, this.alienGroup, function(missileCollide, alienCollide) {
-        //     alienCollide.destroy()
-        //     missileCollide.destroy()
-            
-        //     this.sound.play('explosion')
-        //     this.score = this.score + 1
-        //     this.scoreText.setText('Score: ' + this.score.toString())
-        //     this.createAlien()
-        // }.bind(this))
 
-        // // game over function
-        // this.physics.add.collider(this.ship, this.alienGroup, function(shipCollide, alienCollide) {
-        //     this.sound.play('bomb')
-        //     this.physics.pause()
-        //     alienCollide.destroy()
-        //     shipCollide.destroy()
-        //     this.gameOverText = this.add.text(1920 / 2, 1080 / 2, "Game Over!\nClick to play again", this.gameOverTextStyle).setOrigin(0.5)
-        //     this.gameOverText.setInteractive({ useHandCursor: true })
-        //     this.gameOverText.on("pointerdown", () => this.scene.start("gameScene"))
-        // }.bind(this))
+        // colider
+        this.physics.add.collider(this.missileGroup, this.alienGroup, function(missileCollide, alienCollide, scene = GameSceneInfo) {
+            console.log(missileCollide.target)
+          
+            var returnIndex = scene.targetGroup.children.entries.findIndex(function (data) {return data.target === missileCollide.target})
+            if (returnIndex != -1){
+              scene.targetGroup.children.entries[returnIndex].destroy()
+            }
+            
+            alienCollide.destroy()
+            missileCollide.destroy()
+            
+            this.sound.play('bomb')
+            this.score = this.score + 1
+            this.scoreText.setText('Score: ' + this.score.toString())
+            this.createAlien()
+        }.bind(this))
     }
 
-
-  
     update(time, delta) {
       GameSceneInfo = this
-      if (this.ultActive == true) {
+      if (this.ultOneActive == true) {
         // control the ship
         const keyLeftObj = this.input.keyboard.addKey('LEFT')
         const keyRightObj = this.input.keyboard.addKey('RIGHT')
@@ -239,7 +215,7 @@ class GameScene extends Phaser.Scene {
         if (keySpaceObj.isUp === true) {
             this.fireMissile = false
         }
-
+      }
         // missile interaction
         this.missileGroup.children.each(function(item) {
             item.y = item.y - 15
@@ -247,7 +223,6 @@ class GameScene extends Phaser.Scene {
                 item.destroy()
             }
         })
-      }
       
         // level count
         if (this.score >= this.level * 10) {
@@ -364,9 +339,9 @@ class GameScene extends Phaser.Scene {
           if (this.ultInput === false) {
             this.ultInput = true
 
-            if (this.ult >= 100) {
-              console.log("ult")
-              this.ult = this.ult - 100
+            if (this.ult >= 50) {
+              console.log("ult-tab")
+              this.ult = this.ult - 50
               this.ultText.setText(this.ult.toString() + " %")
               const alienNumber = this.alienGroup.children.entries.length
               console.log(this.alienGroup.children.entries.length)
@@ -387,13 +362,42 @@ class GameScene extends Phaser.Scene {
               }
             
             } else {
-              console.log("ult failed")
+              console.log("ult-tab failed")
             }
           }
         }
 
         if (keyTabObj.isUp === true) {
             this.ultInput = false
+        }
+
+      
+        const keyOneObj = this.input.keyboard.addKey('ONE')
+        if (keyOneObj.isDown === true) {
+          if (this.ultOneInput === false) {
+            this.ultOneInput = true
+
+            if (this.ult >= 30) {
+              console.log("ult-one")
+              this.ult = this.ult - 30
+              this.ultText.setText(this.ult.toString() + " %")
+              this.ultOneActive = true
+              console.log("actived")
+              var timer = this.time.delayedCall(5000, function(scene = GameSceneInfo) {
+                scene.ultOneActive = false
+                console.log("disactived")
+              })
+              
+              
+            
+            } else {
+              console.log("ult-one failed")
+            }
+          }
+        }
+      
+        if (keyOneObj.isUp === true) {
+            this.ultOneInput = false
         }
     }
 }
