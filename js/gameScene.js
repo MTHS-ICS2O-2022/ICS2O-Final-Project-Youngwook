@@ -236,7 +236,7 @@ class GameScene extends Phaser.Scene {
           if (this.submitInput === false) {
             this.submitInput = true
             
-            this.inputText.setText('input: ' + inputText)
+            this.inputText.setText('Input: ' + inputText)
 
             if (inputText != null) {
               var returnIndex = this.targetGroup.children.entries.findIndex(function (data) {return data.target === inputText})
@@ -245,7 +245,7 @@ class GameScene extends Phaser.Scene {
               if (returnIndex != -1){   
                 this.targetGroup.children.entries[returnIndex].destroy()
                 
-                this.ult = this.ult + this.alienGroup.children.entries[returnIndex].target.length
+                this.ult = Math.round(this.ult + this.alienGroup.children.entries[returnIndex].target.length + (this.alienGroup.children.entries[returnIndex].target.length * this.level / 10))
                 this.ultText.setText(this.ult.toString() + " %")
                 
                 this.alienGroup.children.entries[returnIndex].destroy()
@@ -339,6 +339,8 @@ class GameScene extends Phaser.Scene {
 
               for (let count = 0; count < alienNumber; count++) {
                 this.createAlien()
+                this.score = this.score + 1
+                this.scoreText.setText('Score: ' + this.score.toString())
                 this.sound.play('ult')
               }
             
