@@ -8,4 +8,4 @@ This site can be found at: [https://Youngwook-Go.github.io/ICS2O-Final-Project-Y
 
 Enter --> submit word
 
-Tab --> special attack
+Tab, 1 --> special attack
