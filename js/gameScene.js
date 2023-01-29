@@ -343,7 +343,7 @@ class GameScene extends Phaser.Scene {
 
           this.score = 0
           this.ult = 0
-          this.level = 0
+          this.level = 1
           this.life = 3
           inputText = ""
 
