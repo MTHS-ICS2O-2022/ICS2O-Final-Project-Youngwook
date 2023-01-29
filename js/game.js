@@ -9,10 +9,12 @@
 // Scene import statements
 import MenuScene from "./menuScene.js"
 import GameScene from "./gameScene.js"
+import OverScene from "./overScene.js"
 
 // Create the new scenes
 const menuScene = new MenuScene()
 const gameScene = new GameScene()
+const overScene = new OverScene()
 
 /**
  * Start Phaser Game
@@ -43,12 +45,12 @@ const config = {
 }
 
 const game = new Phaser.Game(config)
-// comsole.log(game)
 
 // load scenes
 // NOTE: remember any "key" is global and can't be reused!
 game.scene.add("menuScene", menuScene)
 game.scene.add("gameScene", gameScene)
+game.scene.add("overScene", overScene)
 
 // start title
 game.scene.start("menuScene")
