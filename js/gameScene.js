@@ -437,9 +437,9 @@ class GameScene extends Phaser.Scene {
           if (this.ultInput === false) {
             this.ultInput = true
 
-            if (this.ult >= 30) {
+            if (this.ult >= 100) {
               console.log("ult-tab")
-              this.ult = this.ult - 30
+              this.ult = this.ult - 100
               this.ultText.setText(this.ult.toString() + " %")
               const alienNumber = this.alienGroup.children.entries.length
               console.log(this.alienGroup.children.entries.length)
@@ -475,10 +475,10 @@ class GameScene extends Phaser.Scene {
           if (this.ultOneInput === false) {
             this.ultOneInput = true
 
-            if (this.ult >= 50) {
+            if (this.ult >= 100) {
               console.log("ult-one")
               this.sound.play('ult')
-              this.ult = this.ult - 50
+              this.ult = this.ult - 100
               this.ultText.setText(this.ult.toString() + " %")
               // ult1 active
               this.ultOneActive = true
