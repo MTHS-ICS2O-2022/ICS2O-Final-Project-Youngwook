@@ -406,7 +406,6 @@ class GameScene extends Phaser.Scene {
         })
 
         if (this.life <= 0) {
-          this.sound.play('over')
           this.physics.pause()
           this.textField.destroy()
 
