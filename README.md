@@ -7,5 +7,3 @@
 This site can be found at: [https://Youngwook-Go.github.io/ICS2O-Final-Project-Youngwook/](https://Youngwook-Go.github.io/ICS2O-Final-Project-Youngwook/) 
 
 Enter --> submit word
-
-Tab, 1 --> special attack
