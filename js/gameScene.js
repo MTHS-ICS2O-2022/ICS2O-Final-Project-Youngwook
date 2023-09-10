@@ -479,6 +479,7 @@ class GameScene extends Phaser.Scene {
               this.sound.play('ult')
               this.ult = this.ult - 75
               this.ultText.setText(this.ult.toString() + " %")
+
               // ult1 active
               this.ultOneActive = true
               this.textField.visible = false
@@ -501,6 +502,7 @@ class GameScene extends Phaser.Scene {
         if (keyOneObj.isUp === true) {
             this.ultOneInput = false
         }
+
     }
 }
 

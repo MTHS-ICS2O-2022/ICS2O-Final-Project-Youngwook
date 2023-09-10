@@ -19,6 +19,7 @@ jobs:
       - name: Run GitHub Super Linter
         uses: github/super-linter@main
         env:
+          FILTER_REGEX_INCLUDE: .*node_modiles/.*
           VALIDATE_ALL_CODEBASE: true
           LINTER_RULES_PATH: /
           VALIDATE_CLANG_FORMAT: false
