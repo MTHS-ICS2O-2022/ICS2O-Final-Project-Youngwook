@@ -9,44 +9,51 @@
 /**
  * This class is the Title Scene
 **/
+
 let inputText = ""
 let GameSceneInfo = null
 
 class GameScene extends Phaser.Scene {
     createAlien() {
+
         // get target word
-        var wordDataList = this.cache.json.get('wordDataFile')
+        var wordDataList = this.cache.json.get('wordDataFile') 
         var random = Math.floor(Math.random() * wordDataList.length)
         var targetWord = wordDataList[random]
 
         // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
+
+        // generate random alien velocity
         let alienXVelocity = Math.floor(Math.random() * 200) + 200 - (targetWord.length * 25) + (this.level * 10)
         if (alienXVelocity < 50) {
           alienXVelocity = 50
         }
+
+        // add alien sprite
         const anAlien = this.physics.add.sprite(0, alienYLocation, 'alien')
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
         anAlien.target = targetWord
         console.log(targetWord)
         
+        // add target word text
         const targetText = this.add.text(0, alienYLocation, targetWord, this.targetTextStyle).setOrigin(0.5)
         this.physics.world.enableBody(targetText)
         targetText.body.setVelocity(alienXVelocity , 0)
         targetText.target = targetWord
 
+        // add alien sprite and target word text in group
         this.alienGroup.add(anAlien)
         this.targetGroup.add(targetText)
     }
 
+    // health bonus
     createAlien1() {
-        // get target word
         var wordDataList = this.cache.json.get('wordDataFile')
         var random = Math.floor(Math.random() * wordDataList.length)
         var targetWord = wordDataList[random]
 
-        // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
         let alienXVelocity = Math.floor(Math.random() * 200) + 200 - (targetWord.length * 25) + (this.level * 10)
         if (alienXVelocity < 50) {
@@ -67,13 +74,12 @@ class GameScene extends Phaser.Scene {
         this.targetGroup1.add(targetText)
     }
 
+    // energy bonus
     createAlien2() {
-        // get target word
         var wordDataList = this.cache.json.get('wordDataFile')
         var random = Math.floor(Math.random() * wordDataList.length)
         var targetWord = wordDataList[random]
 
-        // get random alien location
         const alienYLocation = Math.floor(Math.random() * 680) + 100
         let alienXVelocity = Math.floor(Math.random() * 200) + 200 - (targetWord.length * 25) + (this.level * 10)
         if (alienXVelocity < 50) {
@@ -99,17 +105,25 @@ class GameScene extends Phaser.Scene {
 
         this.background = null
         this.ship = null
+
+        // for keyboard input detection
         this.fireMissile = false
         this.submitInput = false
         this.debugInput = false
         this.ultInput = false
         this.ultOneInput = false
-        this.ultOneActive = false
         this.ultTwoInput = false
+
+        // for toggle ability
+        this.ultOneActive = false
+
+        // for numbers
         this.score = 0
         this.ult = 0
         this.life = 3
         this.level = 1
+
+        // for texts
         this.scoreText = null
         this.inputText = null
         this.ultimateText = null
@@ -137,6 +151,7 @@ class GameScene extends Phaser.Scene {
           direction: 'ltr'
         }
 
+        // text styles
         this.targetTextStyle = { font: '48px Arial', fill: '#ff0000', align: 'center' }
         this.targetTextStyle1 = { font: '48px Arial', fill: '#ff00ff', align: 'center' }
         this.targetTextStyle2 = { font: '48px Arial', fill: '#0000ff', align: 'center' }
@@ -157,12 +172,16 @@ class GameScene extends Phaser.Scene {
         this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true)
       
         // assets
+
+        // word data
         this.load.json('wordDataFile', 'https://random-word-api.herokuapp.com/all')
         
+        // game sprite images
         this.load.image('ship', './assets/spaceShip.png')
         this.load.image('missile', './assets/missile.png')
         this.load.image('alien', './assets/alien.png')
 
+        // background images
         this.load.image('space0', './assets/space/space.png')
         this.load.image('space1', './assets/space/front.png')
         this.load.image('space2', './assets/space/back.png')
@@ -171,6 +190,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('space5', './assets/space/right.png')
         this.load.image('space6', './assets/space/left.png')
 
+        // sounds
         this.load.audio('laser', './assets/laser1.wav')
         this.load.audio('bomb', './assets/barrelExploding.wav')
         this.load.audio('over', './assets/laserbig.wav')
@@ -180,11 +200,13 @@ class GameScene extends Phaser.Scene {
   
     create(data) {
         GameSceneInfo = this
+
         // text field
         this.textField = this.add.rexInputText(960, 980, 2000, 100, this.inputStyle).on('textchange', function(i, e, scene = GameSceneInfo) {
           inputText = scene.textField.text
         })
 
+        // generate random background image
         const space0 = this.add.image(0,0, 'space0').setOrigin(0 , 0).setScale(2.0)
         space0.visible = true
         const space1 = this.add.image(0,0, 'space1').setOrigin(0 , 0).setScale(2.0)
@@ -220,7 +242,7 @@ class GameScene extends Phaser.Scene {
         this.createAlien()
         this.createAlien()
 
-        // special alien
+        // special enemy
         this.alienGroup1 = this.add.group()
         this.targetGroup1 = this.add.group()
 
@@ -356,6 +378,7 @@ class GameScene extends Phaser.Scene {
                 this.ultText.setText(this.ult.toString() + " %")
                 
                 this.alienGroup2.children.entries[returnIndex2].destroy()
+
                 // destroy effect
                 this.sound.play('laser')
                 this.score = this.score + 3
@@ -430,7 +453,9 @@ class GameScene extends Phaser.Scene {
           this.scene.start("overScene")
         }
 
-        // ult
+        // special attacks
+
+        // remove every aliens 
         const keyTabObj = this.input.keyboard.addKey('TAB')
         if (keyTabObj.isDown === true) {
           if (this.ultInput === false) {
@@ -469,6 +494,7 @@ class GameScene extends Phaser.Scene {
         }
 
       
+        // enable plane ability
         const keyOneObj = this.input.keyboard.addKey('ONE')
         if (keyOneObj.isDown === true) {
           if (this.ultOneInput === false) {
@@ -502,6 +528,8 @@ class GameScene extends Phaser.Scene {
         if (keyOneObj.isUp === true) {
             this.ultOneInput = false
         }
+
+        // stop every aliens
 
     }
 }
