@@ -1,5 +1,5 @@
 /* Global Phaser */
-site.webmanifest
+
 // Copyright (c) Youngwook All rights reserved
 //
 // Created by: Youngwook
