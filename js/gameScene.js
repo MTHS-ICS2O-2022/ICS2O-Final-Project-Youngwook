@@ -559,8 +559,8 @@ class GameScene extends Phaser.Scene {
           }
         }
 
-        if (keyTabObj.isUp === true) {
-            this.ultInput = false
+        if (keyTwoObj.isUp === true) {
+            this.ultTwoInput = false
         }
     }
 }
