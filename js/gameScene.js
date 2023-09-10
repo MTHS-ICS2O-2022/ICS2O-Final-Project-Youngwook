@@ -546,6 +546,7 @@ class GameScene extends Phaser.Scene {
               console.log(this.alienGroup.children.entries.length)
 
               this.alienGroup.children.each(function(item) {
+                item.body.setVelocity(item.body.velocity.x)
               })
 
               this.targetGroup.children.each(function(item) {
