@@ -25,7 +25,7 @@ class GameScene extends Phaser.Scene {
         const alienYLocation = Math.floor(Math.random() * 680) + 100
 
         // generate random alien velocity
-        let alienXVelocity = Math.floor(Math.random() * 200) + 200 - (targetWord.length * 25) + (this.level * 10)
+        let alienXVelocity = Math.floor(Math.random() * 100) + 200 - (targetWord.length * 25) + (this.level * 10)
         if (alienXVelocity < 50) {
           alienXVelocity = 50
         }
@@ -532,14 +532,14 @@ class GameScene extends Phaser.Scene {
 
         // stop every aliens
 
-        /*const keyTwoObj = this.input.keyboard.addKey('TWO')
+        const keyTwoObj = this.input.keyboard.addKey('TWO')
         if (keyTwoObj.isDown === true) {
           if (this.ultTwoInput === false) {
             this.ultTwoInput = true
 
-            if (this.ult >= 30) {
+            if (this.ult >= 0) {
               console.log("ult-two")
-              this.ult = this.ult - 30
+              this.ult = this.ult - 0
 
               // ------------------
               this.ultText.setText(this.ult.toString() + " %")
@@ -547,19 +547,12 @@ class GameScene extends Phaser.Scene {
               console.log(this.alienGroup.children.entries.length)
 
               this.alienGroup.children.each(function(item) {
-                item.destroy()
+                item.setVelocity(0)
               })
 
               this.targetGroup.children.each(function(item) {
-                item.destroy()
+                item.setVelocity(0)
               })
-
-              for (let count = 0; count < alienNumber; count++) {
-                this.createAlien()
-                this.score = this.score + 1
-                this.scoreText.setText('Score: ' + this.score.toString())
-                this.sound.play('ult')
-              }
             
             } else {
               console.log("ult-tab failed")
@@ -569,7 +562,7 @@ class GameScene extends Phaser.Scene {
 
         if (keyTabObj.isUp === true) {
             this.ultInput = false
-        }*/
+        }
     }
 }
 
