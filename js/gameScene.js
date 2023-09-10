@@ -550,8 +550,7 @@ class GameScene extends Phaser.Scene {
               })
 
               this.targetGroup.children.each(function(item) {
-                console.log(item.body.velocity)
-                item.body.setVelocity(0)
+                item.body.setVelocity(item.body.velocity.x / 2 ,0)
               })
             
             } else {
