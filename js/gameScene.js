@@ -35,6 +35,7 @@ class GameScene extends Phaser.Scene {
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
         anAlien.target = targetWord
+        console.log(this)
         //console.log("target: ", targetWord)
         
         // add target word text
