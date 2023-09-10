@@ -547,7 +547,7 @@ class GameScene extends Phaser.Scene {
               console.log(this.alienGroup.children.entries.length)
 
               this.alienGroup.children.each(function(item) {
-                console.log(item[0])
+                console.log(item)
               })
 
               this.targetGroup.children.each(function(item) {
