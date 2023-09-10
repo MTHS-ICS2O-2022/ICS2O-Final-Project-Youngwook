@@ -35,7 +35,7 @@ class GameScene extends Phaser.Scene {
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
         anAlien.target = targetWord
-        console.log(targetWord)
+        //console.log("target: ", targetWord)
         
         // add target word text
         const targetText = this.add.text(0, alienYLocation, targetWord, this.targetTextStyle).setOrigin(0.5)
@@ -63,7 +63,7 @@ class GameScene extends Phaser.Scene {
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
         anAlien.target = targetWord
-        console.log(targetWord)
+        //console.log("target: ", targetWord)
         
         const targetText = this.add.text(0, alienYLocation, targetWord, this.targetTextStyle1).setOrigin(0.5)
         this.physics.world.enableBody(targetText)
@@ -89,7 +89,7 @@ class GameScene extends Phaser.Scene {
         anAlien.body.velocity.x = alienXVelocity 
         anAlien.body.velocity.y = 0
         anAlien.target = targetWord
-        console.log(targetWord)
+        //console.log("target: ", targetWord)
         
         const targetText = this.add.text(0, alienYLocation, targetWord, this.targetTextStyle2).setOrigin(0.5)
         this.physics.world.enableBody(targetText)
@@ -251,7 +251,7 @@ class GameScene extends Phaser.Scene {
 
         // colider
         this.physics.add.collider(this.missileGroup, this.alienGroup, function(missileCollide, alienCollide, scene = GameSceneInfo) {
-            console.log(missileCollide.target)
+            console.log("missileCollide.target: ", missileCollide.target)
           
             var returnIndex = scene.targetGroup.children.entries.findIndex(function (data) {return data.target === missileCollide.target})
             if (returnIndex != -1){
@@ -322,7 +322,7 @@ class GameScene extends Phaser.Scene {
           this.createAlien()
 
           var createRandom = Math.floor(Math.random() * 4)
-          console.log(createRandom)
+          console.log("createRandom: ", createRandom)
           if (createRandom == 0 ) {
             this.createAlien1()
           } else if (createRandom == 1) {
@@ -434,7 +434,7 @@ class GameScene extends Phaser.Scene {
 
           localStorage.setItem('score', this.score)
           this.localScore = localStorage.getItem('score')
-          console.log(this.localScore)
+          console.log("localScore: ", this.localScore)
 
           this.score = 0
           this.ult = 0
@@ -462,11 +462,11 @@ class GameScene extends Phaser.Scene {
             this.ultInput = true
 
             if (this.ult >= 100) {
-              console.log("ult-tab")
+              console.log("ult-tab activated")
               this.ult = this.ult - 100
               this.ultText.setText(this.ult.toString() + " %")
               const alienNumber = this.alienGroup.children.entries.length
-              console.log(this.alienGroup.children.entries.length)
+              console.log("alienGroup.children.entries.length", this.alienGroup.children.entries.length)
 
               this.alienGroup.children.each(function(item) {
                 item.destroy()
@@ -501,7 +501,7 @@ class GameScene extends Phaser.Scene {
             this.ultOneInput = true
 
             if (this.ult >= 75) {
-              console.log("ult-one")
+              console.log("ult-one activated 1")
               this.sound.play('ult')
               this.ult = this.ult - 75
               this.ultText.setText(this.ult.toString() + " %")
@@ -510,14 +510,14 @@ class GameScene extends Phaser.Scene {
               this.ultOneActive = true
               this.textField.visible = false
               this.textField.readOnly = true
-              console.log("actived")
+              console.log("ult-one actived 2")
 
-              // ult2 disable
+              // ult1 disable
               var timer = this.time.delayedCall(5000, function(scene = GameSceneInfo) {
                 scene.ultOneActive = false
                 scene.textField.visible = true
                 scene.textField.readOnly = false
-                console.log("disactived")
+                console.log("ult-1 disactived")
               })
             } else {
               console.log("ult-one failed")
@@ -531,6 +531,44 @@ class GameScene extends Phaser.Scene {
 
         // stop every aliens
 
+        /*const keyTwoObj = this.input.keyboard.addKey('TWO')
+        if (keyTwoObj.isDown === true) {
+          if (this.ultTwoInput === false) {
+            this.ultTwoInput = true
+
+            if (this.ult >= 30) {
+              console.log("ult-two")
+              this.ult = this.ult - 30
+
+              // ------------------
+              this.ultText.setText(this.ult.toString() + " %")
+              const alienNumber = this.alienGroup.children.entries.length
+              console.log(this.alienGroup.children.entries.length)
+
+              this.alienGroup.children.each(function(item) {
+                item.destroy()
+              })
+
+              this.targetGroup.children.each(function(item) {
+                item.destroy()
+              })
+
+              for (let count = 0; count < alienNumber; count++) {
+                this.createAlien()
+                this.score = this.score + 1
+                this.scoreText.setText('Score: ' + this.score.toString())
+                this.sound.play('ult')
+              }
+            
+            } else {
+              console.log("ult-tab failed")
+            }
+          }
+        }
+
+        if (keyTabObj.isUp === true) {
+            this.ultInput = false
+        }*/
     }
 }
 
