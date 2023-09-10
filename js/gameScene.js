@@ -194,7 +194,6 @@ class GameScene extends Phaser.Scene {
         // sounds
         this.load.audio('laser', './assets/laser1.wav')
         this.load.audio('bomb', './assets/barrelExploding.wav')
-        this.load.audio('over', './assets/laserbig.wav')
         this.load.audio('ult', './assets/laserblast.wav')
         this.load.audio('spark', './assets/spark.wav')
     }
@@ -547,11 +546,11 @@ class GameScene extends Phaser.Scene {
               console.log(this.alienGroup.children.entries.length)
 
               this.alienGroup.children.each(function(item) {
-                item.body.setVelocity(0)
+                item.body.setVelocity(item.body.velocity.X / 2)
               })
 
               this.targetGroup.children.each(function(item) {
-                
+                item.body.setVelocity(item.body.velocity.X / 2)
               })
             
             } else {
