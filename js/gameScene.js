@@ -536,9 +536,9 @@ class GameScene extends Phaser.Scene {
           if (this.ultTwoInput === false) {
             this.ultTwoInput = true
 
-            if (this.ult >= 75) {
+            if (this.ult >= 0) {
               console.log("ult-two")
-              this.ult = this.ult - 75
+              this.ult = this.ult - 0
 
               // ------------------
               this.ultText.setText(this.ult.toString() + " %")
